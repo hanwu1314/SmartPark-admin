@@ -25,9 +25,16 @@
 <script>
 export default {
   methods: {
-    // 退出登录
     logout() {
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$confirm('确认要退出登录吗, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$store.commit('user/clearUserInfo')
+        this.$router.push('/login')
+      }).catch(() => {
+      })
     }
   }
 }
@@ -39,6 +46,7 @@ export default {
   line-height: 64px;
   overflow: hidden;
   position: relative;
+
   .app-breadcrumb {
     display: inline-block;
     font-size: 18px;
@@ -110,10 +118,12 @@ export default {
 
     .avatar-container {
       margin-right: 30px;
+
       .avatar-wrapper {
         margin-top: 5px;
         position: relative;
-        .name{
+
+        .name {
           font-weight: 600;
           cursor: pointer;
         }
