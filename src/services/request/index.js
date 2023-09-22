@@ -1,6 +1,7 @@
 import axios from "axios";
 import { BASE_URL, TIMEOUT } from "./config";
 import { getToken } from "@/utils/auth";
+import { Message } from "element-ui";
 class HWRequest {
   constructor(baseURL, timeout = 10000) {
     this.instance = axios.create({
@@ -25,6 +26,10 @@ class HWRequest {
         return res;
       },
       (err) => {
+        Message({
+          type: "warning",
+          message: err.response.data.msg,
+        });
         return err;
       }
     );
