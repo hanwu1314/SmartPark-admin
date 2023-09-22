@@ -25,13 +25,16 @@
           :key="item.id"
         />
       </el-select>
-      <el-button type="primary" class="search-btn" @click="doSearch"
-        >查询</el-button
-      >
+      <el-button type="primary" class="search-btn" @click="doSearch">
+        查询
+      </el-button>
     </div>
     <!-- 新增删除操作区域 -->
     <div class="create-container">
-      <el-button type="primary">添加月卡</el-button>
+      <el-button type="primary" @click="$router.push('/addCard')">
+        添加月卡
+      </el-button>
+
       <el-button>批量删除</el-button>
     </div>
     <!-- 表格区域 -->
