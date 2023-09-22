@@ -5,7 +5,7 @@ function resolve(dir) {
   return path.join(__dirname, dir);
 }
 
-const port = process.env.port || 8081; // dev port
+const port = process.env.port || 8080; // dev port
 
 module.exports = {
   publicPath: "/",
