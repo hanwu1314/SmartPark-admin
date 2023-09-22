@@ -66,6 +66,7 @@ export default {
     if (formStr) {
       const formObj = JSON.parse(formStr)
       this.form = formObj
+      this.remember = true
     }
   },
   methods: {
