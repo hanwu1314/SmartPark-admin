@@ -1,6 +1,6 @@
 import axios from "axios";
 import { BASE_URL, TIMEOUT } from "./config";
-
+import { getToken } from "@/utils/auth";
 class HWRequest {
   constructor(baseURL, timeout = 10000) {
     this.instance = axios.create({
@@ -10,6 +10,10 @@ class HWRequest {
 
     this.instance.interceptors.request.use(
       (config) => {
+        const token = getToken();
+        if (token) {
+          config.headers.Authorization = token;
+        }
         return config;
       },
       (err) => {
