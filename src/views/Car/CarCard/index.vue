@@ -1,17 +1,34 @@
 <template>
   <div class="card-container">
     <!-- 搜索区域 -->
-    <!-- <div class="search-container">
+    <div class="search-container">
       <span class="search-label">车牌号码：</span>
-      <el-input clearable placeholder="请输入内容" class="search-main" />
+      <el-input
+        v-model="params.cardNumber"
+        clearable
+        placeholder="请输入内容"
+        class="search-main"
+      />
       <span class="search-label">车主姓名：</span>
-      <el-input clearable placeholder="请输入内容" class="search-main" />
+      <el-input
+        v-model="params.personName"
+        clearable
+        placeholder="请输入内容"
+        class="search-main"
+      />
       <span class="search-label">状态：</span>
-      <el-select>
-        <el-option v-for="item in []" :key="item.id" />
+      <el-select v-model="params.cardStatus">
+        <el-option
+          v-for="item in statusList"
+          :value="item.id"
+          :label="item.name"
+          :key="item.id"
+        />
       </el-select>
-      <el-button type="primary" class="search-btn">查询</el-button>
-    </div> -->
+      <el-button type="primary" class="search-btn" @click="doSearch"
+        >查询</el-button
+      >
+    </div>
     <!-- 新增删除操作区域 -->
     <div class="create-container">
       <el-button type="primary">添加月卡</el-button>
@@ -85,8 +102,21 @@ export default {
       params: {
         page: 1,
         pageSize: 2,
+        cardNumber: "",
+        personName: "",
+        cardStatus: null,
       },
       total: 0,
+      statusList: [
+        {
+          id: 0,
+          name: "有效",
+        },
+        {
+          id: 1,
+          name: "已过期",
+        },
+      ],
     };
   },
   mounted() {
@@ -107,6 +137,10 @@ export default {
     },
     currentChange(page) {
       this.params.page = page;
+      this.getList();
+    },
+    doSearch() {
+      this.params.page = 1;
       this.getList();
     },
   },
