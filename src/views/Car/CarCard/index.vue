@@ -7,23 +7,20 @@
         v-model="params.cardNumber"
         clearable
         placeholder="请输入内容"
-        class="search-main"
-      />
+        class="search-main" />
       <span class="search-label">车主姓名：</span>
       <el-input
         v-model="params.personName"
         clearable
         placeholder="请输入内容"
-        class="search-main"
-      />
+        class="search-main" />
       <span class="search-label">状态：</span>
       <el-select v-model="params.cardStatus">
         <el-option
           v-for="item in statusList"
           :value="item.id"
           :label="item.name"
-          :key="item.id"
-        />
+          :key="item.id" />
       </el-select>
       <el-button type="primary" class="search-btn" @click="doSearch">
         查询
@@ -48,8 +45,7 @@
         <el-table-column
           label="状态"
           prop="cardStatus"
-          :formatter="formatStatus"
-        />
+          :formatter="formatStatus" />
         <el-table-column label="操作" fixed="right" width="180">
           <template #default="scope">
             <el-button size="mini" type="text">续费</el-button>
@@ -66,8 +62,7 @@
         layout="total, prev, pager, next"
         :page-size="params.pageSize"
         :total="total"
-        @current-change="currentChange"
-      />
+        @current-change="currentChange" />
     </div>
     <!-- 添加楼宇 -->
     <el-dialog title="添加楼宇" width="580px">
@@ -97,7 +92,7 @@
 </template>
 
 <script>
-import { getCardListAPI } from "@/services/index";
+import { getCardListAPI } from '@/services/index'
 export default {
   data() {
     return {
@@ -105,49 +100,49 @@ export default {
       params: {
         page: 1,
         pageSize: 2,
-        cardNumber: "",
-        personName: "",
-        cardStatus: null,
+        cardNumber: '',
+        personName: '',
+        cardStatus: null
       },
       total: 0,
       statusList: [
         {
           id: 0,
-          name: "有效",
+          name: '有效'
         },
         {
           id: 1,
-          name: "已过期",
-        },
-      ],
-    };
+          name: '已过期'
+        }
+      ]
+    }
   },
   mounted() {
-    this.getList();
+    this.getList()
   },
   methods: {
     async getList() {
-      const res = await getCardListAPI(this.params);
-      this.list = res.data.rows;
-      this.total = res.data.total;
+      const res = await getCardListAPI(this.params)
+      this.list = res.data.rows
+      this.total = res.data.total
     },
     formatStatus(row, column) {
       const MAP = {
-        0: "有效",
-        1: "已过期",
-      };
-      return MAP[row.cardStatus];
+        0: '有效',
+        1: '已过期'
+      }
+      return MAP[row.cardStatus]
     },
     currentChange(page) {
-      this.params.page = page;
-      this.getList();
+      this.params.page = page
+      this.getList()
     },
     doSearch() {
-      this.params.page = 1;
-      this.getList();
-    },
-  },
-};
+      this.params.page = 1
+      this.getList()
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

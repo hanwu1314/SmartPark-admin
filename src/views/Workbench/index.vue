@@ -1,13 +1,7 @@
-<script>
-
-</script>
+<script></script>
 
 <template>
-  <div class="databoard-container">
-    工作台
-  </div>
+  <div class="databoard-container">工作台</div>
 </template>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

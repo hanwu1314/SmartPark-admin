@@ -11,8 +11,7 @@
             ref="carInfoForm"
             :model="carInfoForm"
             :rules="carInfoRules"
-            label-width="100px"
-          >
+            label-width="100px">
             <el-form-item label="车主姓名" prop="personName">
               <el-input v-model="carInfoForm.personName" />
             </el-form-item>
@@ -35,8 +34,7 @@
             ref="feeForm"
             :model="feeForm"
             :rules="feeFormRules"
-            label-width="100px"
-          >
+            label-width="100px">
             <el-form-item label="有效日期" prop="payTime">
               <el-date-picker
                 v-model="feeForm.payTime"
@@ -44,8 +42,7 @@
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
-                value-format="yyyy-MM-dd"
-              />
+                value-format="yyyy-MM-dd" />
             </el-form-item>
             <el-form-item label="支付金额" prop="paymentAmount">
               <el-input v-model="feeForm.paymentAmount" />
@@ -56,8 +53,7 @@
                   v-for="item in payMethodList"
                   :key="item.id"
                   :value="item.id"
-                  :label="item.name"
-                />
+                  :label="item.name" />
               </el-select>
             </el-form-item>
           </el-form>
@@ -74,100 +70,100 @@
 </template>
 
 <script>
-import { createCardAPI } from "@/services";
+import { createCardAPI } from '@/services'
 export default {
   data() {
     const validateCarNumber = (rule, value, callback) => {
-      const reg = /^[\u4E00-\u9FA5][\da-zA-Z]{6}$/;
+      const reg = /^[\u4E00-\u9FA5][\da-zA-Z]{6}$/
       if (!reg.test(value)) {
-        callback(new Error("请输入符合规范的车牌号"));
+        callback(new Error('请输入符合规范的车牌号'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     return {
       carInfoForm: {
-        personName: "",
-        phoneNumber: "",
-        carNumber: "",
-        carBrand: "",
+        personName: '',
+        phoneNumber: '',
+        carNumber: '',
+        carBrand: ''
       },
       carInfoRules: {
         personName: [
           {
             required: true,
-            message: "请输入车主姓名",
-            trigger: "blur",
-          },
+            message: '请输入车主姓名',
+            trigger: 'blur'
+          }
         ],
         phoneNumber: [
           {
             required: true,
-            message: "请输入联系方式",
-            trigger: "blur",
-          },
+            message: '请输入联系方式',
+            trigger: 'blur'
+          }
         ],
         carNumber: [
           {
             required: true,
-            message: "请输入车辆号码",
-            trigger: "blur",
+            message: '请输入车辆号码',
+            trigger: 'blur'
           },
           {
             validator: validateCarNumber,
-            trigger: "blur",
-          },
+            trigger: 'blur'
+          }
         ],
         carBrand: [
           {
             required: true,
-            message: "请输入车辆品牌",
-            trigger: "blur",
-          },
-        ],
+            message: '请输入车辆品牌',
+            trigger: 'blur'
+          }
+        ]
       },
       feeForm: {
-        payTime: "",
+        payTime: '',
         paymentAmount: null,
-        paymentMethod: "",
+        paymentMethod: ''
       },
       feeFormRules: {
         payTime: [
           {
             required: true,
-            message: "请选择支付时间",
-          },
+            message: '请选择支付时间'
+          }
         ],
         paymentAmount: [
           {
             required: true,
-            message: "请输入支付金额",
-            trigger: "blur",
-          },
+            message: '请输入支付金额',
+            trigger: 'blur'
+          }
         ],
         paymentMethod: [
           {
             required: true,
-            message: "请选择支付方式",
-            trigger: "change",
-          },
-        ],
+            message: '请选择支付方式',
+            trigger: 'change'
+          }
+        ]
       },
       payMethodList: [
         {
-          id: "Alipay",
-          name: "支付宝",
+          id: 'Alipay',
+          name: '支付宝'
         },
         {
-          id: "WeChat",
-          name: "微信",
+          id: 'WeChat',
+          name: '微信'
         },
         {
-          id: "Cash",
-          name: "线下",
-        },
-      ],
-    };
+          id: 'Cash',
+          name: '线下'
+        }
+      ]
+    }
   },
   methods: {
     confirmAdd() {
@@ -180,19 +176,19 @@ export default {
                 ...this.carInfoForm,
                 ...this.feeForm,
                 cardStartDate: this.feeForm.payTime[0],
-                cardEndDate: this.feeForm.payTime[1],
-              };
-              delete reqData.payTime;
+                cardEndDate: this.feeForm.payTime[1]
+              }
+              delete reqData.payTime
 
-              this.$message.success(`${this.id ? "更新成功" : "新增成功"}`);
-              this.$router.back();
+              this.$message.success(`${this.id ? '更新成功' : '新增成功'}`)
+              this.$router.back()
             }
-          });
+          })
         }
-      });
-    },
-  },
-};
+      })
+    }
+  }
+}
 </script>
 
 <style scoped lang="scss">

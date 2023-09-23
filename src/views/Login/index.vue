@@ -4,29 +4,43 @@
     <div class="color"></div>
     <div class="color"></div>
     <div class="box">
-      <div class="square" style="--i:0;"></div>
-      <div class="square" style="--i:1;"></div>
-      <div class="square" style="--i:2;"></div>
-      <div class="square" style="--i:3;"></div>
-      <div class="square" style="--i:4;"></div>
+      <div class="square" style="--i: 0"></div>
+      <div class="square" style="--i: 1"></div>
+      <div class="square" style="--i: 2"></div>
+      <div class="square" style="--i: 3"></div>
+      <div class="square" style="--i: 4"></div>
       <div class="container">
-        <el-form class="form" status-icon :rules="rules" label-width="80px" label-position="right" ref="form"
+        <el-form
+          class="form"
+          status-icon
+          :rules="rules"
+          label-width="80px"
+          label-position="right"
+          ref="form"
           :model="form">
           <h2>智慧园区 - 登录</h2>
           <el-form-item class="inputBox" label="账号" prop="username">
             <el-input v-model="form.username"></el-input>
           </el-form-item>
           <el-form-item label="密码" prop="password">
-            <el-input v-model="form.password" type="password" autocomplete="off"></el-input>
+            <el-input
+              v-model="form.password"
+              type="password"
+              autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item prop="remember">
             <el-checkbox v-model="remember">记住我</el-checkbox>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" class="login_btn" @click="loginHandler">登录</el-button>
+            <el-button type="primary" class="login_btn" @click="loginHandler"
+              >登录</el-button
+            >
           </el-form-item>
         </el-form>
-        <div class="textBtn"><span class="desc">测试账号:</span><button @click="setAdmin_btn">admin</button></div>
+        <div class="textBtn">
+          <span class="desc">测试账号:</span
+          ><button @click="setAdmin_btn">admin</button>
+        </div>
       </div>
     </div>
   </div>
@@ -58,7 +72,7 @@ export default {
             trigger: 'blur'
           }
         ]
-      },
+      }
     }
   },
   created() {
@@ -71,7 +85,7 @@ export default {
   },
   methods: {
     loginHandler() {
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
           if (this.remember) {
             localStorage.setItem(REMEMBER_KEY, JSON.stringify(this.form))
@@ -88,13 +102,11 @@ export default {
       })
     },
     setAdmin_btn() {
-      this.form.username = "admin"
-      this.form.password = "admin123"
+      this.form.username = 'admin'
+      this.form.password = 'admin123'
     }
   }
-
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -139,7 +151,7 @@ export default {
     .square {
       position: absolute;
       backdrop-filter: blur(5px);
-      box-shadow: 0 25px 45px rgba(0, 0, 0, .1);
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.5);
       border-right: 1px solid rgba(255, 255, 255, 0.2);
       border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -197,7 +209,7 @@ export default {
     justify-content: center;
     align-items: center;
     backdrop-filter: blur(5px);
-    box-shadow: 0 25px 45px rgba(0, 0, 0, .1);
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-right: 1px solid rgba(255, 255, 255, 0.2);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -225,13 +237,11 @@ export default {
           background-color: #444;
         }
       }
-
     }
   }
 }
 
 @keyframes animate {
-
   0%,
   100% {
     transform: translateY(-40px);
