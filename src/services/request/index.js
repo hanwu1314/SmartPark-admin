@@ -1,38 +1,45 @@
-import axios from "axios";
-import { BASE_URL, TIMEOUT } from "./config";
-import { getToken } from "@/utils/auth";
-import { Message } from "element-ui";
+import axios from 'axios'
+import { BASE_URL, TIMEOUT } from './config'
+import { getToken } from '@/utils/auth'
+import { Message } from 'element-ui'
 class HWRequest {
   constructor(baseURL, timeout = 10000) {
     this.instance = axios.create({
       baseURL,
-      timeout,
-    });
+      timeout
+    })
 
     this.instance.interceptors.request.use(
       (config) => {
-        const token = getToken();
+        const token = getToken()
         if (token) {
-          config.headers.Authorization = token;
+          config.headers.Authorization = token
         }
-        return config;
+        return config
       },
       (err) => {
-        return err;
+        return err
       }
-    );
+    )
     this.instance.interceptors.response.use(
       (res) => {
-        return res;
+        if (res.data.code === 50000) {
+          Message({
+            type: 'warning',
+            message: res.data.msg
+          })
+          return
+        }
+        return res
       },
       (err) => {
         Message({
-          type: "warning",
-          message: err.response.data.msg,
-        });
-        return err;
+          type: 'warning',
+          message: err.response.data.msg
+        })
+        return err
       }
-    );
+    )
   }
 
   request(config) {
@@ -40,27 +47,27 @@ class HWRequest {
       this.instance
         .request(config)
         .then((res) => {
-          resolve(res.data);
+          resolve(res.data)
         })
         .catch((err) => {
-          reject(err);
-        });
-    });
+          reject(err)
+        })
+    })
   }
 
   get(config) {
-    return this.request({ ...config, method: "get" });
+    return this.request({ ...config, method: 'get' })
   }
 
   post(config) {
-    return this.request({ ...config, method: "post" });
+    return this.request({ ...config, method: 'post' })
   }
   put(config) {
-    return this.request({ ...config, method: "put" });
+    return this.request({ ...config, method: 'put' })
   }
   delete(config) {
-    return this.request({ ...config, method: "delete" });
+    return this.request({ ...config, method: 'delete' })
   }
 }
 
-export default new HWRequest(BASE_URL, TIMEOUT);
+export default new HWRequest(BASE_URL, TIMEOUT)

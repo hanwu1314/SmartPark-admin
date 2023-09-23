@@ -32,11 +32,15 @@
         添加月卡
       </el-button>
 
-      <el-button>批量删除</el-button>
+      <el-button @click="delAllCard">批量删除</el-button>
     </div>
     <!-- 表格区域 -->
     <div class="table">
-      <el-table style="width: 100%" :data="list">
+      <el-table
+        style="width: 100%"
+        :data="list"
+        @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" />
         <el-table-column type="index" label="序号" />
         <el-table-column label="车主名称" prop="personName" />
         <el-table-column label="联系方式" prop="phoneNumber" />
@@ -54,7 +58,9 @@
             <el-button size="mini" type="text" @click="editCard(scope.row.id)"
               >编辑</el-button
             >
-            <el-button size="mini" type="text">删除</el-button>
+            <el-button size="mini" type="text" @click="delCard(scope.row.id)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -95,11 +101,12 @@
 </template>
 
 <script>
-import { getCardListAPI } from '@/services/index'
+import { getCardListAPI, delCardAPI, delAllCardAPI } from '@/services/index'
 export default {
   data() {
     return {
       list: [],
+      selectedList: [],
       params: {
         page: 1,
         pageSize: 10,
@@ -151,6 +158,35 @@ export default {
           id
         }
       })
+    },
+    delCard(id) {
+      this.$confirm('确认删除月卡吗, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          await delCardAPI(id)
+          this.getList()
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    handleSelectionChange(value) {
+      this.selectedList = value
+    },
+    async delAllCard() {
+      await delAllCardAPI(this.selectedList.map((item) => item.id))
+      this.getList()
+      this.$message.success('批量删除成功')
     }
   }
 }
