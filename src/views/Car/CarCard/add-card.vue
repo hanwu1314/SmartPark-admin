@@ -1,7 +1,9 @@
 <template>
   <div class="add-card">
     <header class="add-header">
-      <el-page-header content="增加月卡" @back="$router.back()" />
+      <el-page-header
+        :content="id ? '编辑月卡' : '新增月卡'"
+        @back="$router.back()" />
     </header>
     <main class="add-main">
       <div class="form-container">
@@ -70,7 +72,7 @@
 </template>
 
 <script>
-import { createCardAPI } from '@/services'
+import { createCardAPI, getDetailAPI, updateCardAPI } from '@/services'
 export default {
   data() {
     const validateCarNumber = (rule, value, callback) => {
@@ -166,7 +168,9 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$route.query.id)
+    if (this.id) {
+      this.getCardDetail()
+    }
   },
   methods: {
     confirmAdd() {
@@ -182,6 +186,12 @@ export default {
                 cardEndDate: this.feeForm.payTime[1]
               }
               delete reqData.payTime
+              let res = null
+              if (this.id) {
+                res = await updateCardAPI(reqData)
+              } else {
+                res = await createCardAPI(reqData)
+              }
 
               this.$message.success(`${this.id ? '更新成功' : '新增成功'}`)
               this.$router.back()
@@ -189,6 +199,38 @@ export default {
           })
         }
       })
+    },
+    async getCardDetail() {
+      const res = await getDetailAPI(this.id)
+      // 第一个表单
+      const {
+        carInfoId,
+        rechargeId,
+        personName,
+        phoneNumber,
+        carNumber,
+        carBrand
+      } = res.data
+      this.carInfoForm = {
+        carInfoId,
+        rechargeId,
+        personName,
+        phoneNumber,
+        carNumber,
+        carBrand
+      }
+      // 第二个表单
+      const { cardStartDate, cardEndDate, paymentAmount, paymentMethod } =
+        res.data
+      this.feeForm.payTime = [cardStartDate, cardEndDate]
+      this.feeForm.paymentAmount = paymentAmount
+      this.feeForm.paymentMethod = paymentMethod
+    }
+  },
+  computed: {
+    // 缓存id 方便调用
+    id() {
+      return this.$route.query.id
     }
   }
 }

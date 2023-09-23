@@ -42,6 +42,7 @@
         <el-table-column label="联系方式" prop="phoneNumber" />
         <el-table-column label="车牌号码" prop="carNumber" />
         <el-table-column label="车辆品牌" prop="carBrand" />
+        <el-table-column label="剩余有效天数" prop="totalEffectiveDate" />
         <el-table-column
           label="状态"
           prop="cardStatus"
@@ -101,7 +102,7 @@ export default {
       list: [],
       params: {
         page: 1,
-        pageSize: 2,
+        pageSize: 10,
         cardNumber: '',
         personName: '',
         cardStatus: null
