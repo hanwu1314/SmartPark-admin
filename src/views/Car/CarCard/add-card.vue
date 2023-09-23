@@ -165,6 +165,9 @@ export default {
       ]
     }
   },
+  mounted() {
+    console.log(this.$route.query.id)
+  },
   methods: {
     confirmAdd() {
       this.$refs.carInfoForm.validate((valid) => {
