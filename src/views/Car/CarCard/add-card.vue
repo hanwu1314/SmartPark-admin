@@ -7,18 +7,23 @@
       <div class="form-container">
         <div class="title">车辆信息</div>
         <div class="form">
-          <el-form label-width="100px">
-            <el-form-item label="车主姓名">
-              <el-input />
+          <el-form
+            ref="carInfoForm"
+            :model="carInfoForm"
+            :rules="carInfoRules"
+            label-width="100px"
+          >
+            <el-form-item label="车主姓名" prop="personName">
+              <el-input v-model="carInfoForm.personName" />
             </el-form-item>
-            <el-form-item label="联系方式">
-              <el-input />
+            <el-form-item label="联系方式" prop="phoneNumber">
+              <el-input v-model="carInfoForm.phoneNumber" />
             </el-form-item>
-            <el-form-item label="车辆号码">
-              <el-input />
+            <el-form-item label="车辆号码" prop="carNumber">
+              <el-input v-model="carInfoForm.carNumber" />
             </el-form-item>
-            <el-form-item label="企业联系人">
-              <el-input />
+            <el-form-item label="车辆品牌" prop="carBrand">
+              <el-input v-model="carInfoForm.carBrand" />
             </el-form-item>
           </el-form>
         </div>
@@ -35,7 +40,7 @@
             </el-form-item>
             <el-form-item label="支付方式">
               <el-select>
-                <el-option
+                <el-optionp
                   v-for="item in [{}]"
                   :key="item.industryCode"
                   :value="item.industryCode"
@@ -57,7 +62,60 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    const validateCarNumber = (rule, value, callback) => {
+      const reg = /^[\u4E00-\u9FA5][\da-zA-Z]{6}$/;
+      if (!reg.test(value)) {
+        callback(new Error("请输入符合规范的车牌号"));
+      } else {
+        callback();
+      }
+    };
+    return {
+      carInfoForm: {
+        personName: "",
+        phoneNumber: "",
+        carNumber: "",
+        carBrand: "",
+      },
+      carInfoRules: {
+        personName: [
+          {
+            required: true,
+            message: "请输入车主姓名",
+            trigger: "blur",
+          },
+        ],
+        phoneNumber: [
+          {
+            required: true,
+            message: "请输入联系方式",
+            trigger: "blur",
+          },
+        ],
+        carNumber: [
+          {
+            required: true,
+            message: "请输入车辆号码",
+            trigger: "blur",
+          },
+          {
+            validator: validateCarNumber,
+            trigger: "blur",
+          },
+        ],
+        carBrand: [
+          {
+            required: true,
+            message: "请输入车辆品牌",
+            trigger: "blur",
+          },
+        ],
+      },
+    };
+  },
+};
 </script>
 
 <style scoped lang="scss">
