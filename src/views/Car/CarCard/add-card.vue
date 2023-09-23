@@ -31,20 +31,32 @@
       <div class="form-container">
         <div class="title">最新一次月卡缴费信息</div>
         <div class="form">
-          <el-form label-width="100px">
-            <el-form-item label="有效日期">
-              <el-input />
+          <el-form
+            ref="feeForm"
+            :model="feeForm"
+            :rules="feeFormRules"
+            label-width="100px"
+          >
+            <el-form-item label="有效日期" prop="payTime">
+              <el-date-picker
+                v-model="feeForm.payTime"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                value-format="yyyy-MM-dd"
+              />
             </el-form-item>
-            <el-form-item label="支付金额">
-              <el-input />
+            <el-form-item label="支付金额" prop="paymentAmount">
+              <el-input v-model="feeForm.paymentAmount" />
             </el-form-item>
-            <el-form-item label="支付方式">
-              <el-select>
-                <el-optionp
-                  v-for="item in [{}]"
-                  :key="item.industryCode"
-                  :value="item.industryCode"
-                  :label="item.industryName"
+            <el-form-item label="支付方式" prop="paymentMethod">
+              <el-select v-model="feeForm.paymentMethod">
+                <el-option
+                  v-for="item in payMethodList"
+                  :key="item.id"
+                  :value="item.id"
+                  :label="item.name"
                 />
               </el-select>
             </el-form-item>
@@ -55,13 +67,14 @@
     <footer class="add-footer">
       <div class="btn-container">
         <el-button>重置</el-button>
-        <el-button type="primary">确定</el-button>
+        <el-button type="primary" @click="confirmAdd">确定</el-button>
       </div>
     </footer>
   </div>
 </template>
 
 <script>
+import { createCardAPI } from "@/services";
 export default {
   data() {
     const validateCarNumber = (rule, value, callback) => {
@@ -113,7 +126,71 @@ export default {
           },
         ],
       },
+      feeForm: {
+        payTime: "",
+        paymentAmount: null,
+        paymentMethod: "",
+      },
+      feeFormRules: {
+        payTime: [
+          {
+            required: true,
+            message: "请选择支付时间",
+          },
+        ],
+        paymentAmount: [
+          {
+            required: true,
+            message: "请输入支付金额",
+            trigger: "blur",
+          },
+        ],
+        paymentMethod: [
+          {
+            required: true,
+            message: "请选择支付方式",
+            trigger: "change",
+          },
+        ],
+      },
+      payMethodList: [
+        {
+          id: "Alipay",
+          name: "支付宝",
+        },
+        {
+          id: "WeChat",
+          name: "微信",
+        },
+        {
+          id: "Cash",
+          name: "线下",
+        },
+      ],
     };
+  },
+  methods: {
+    confirmAdd() {
+      this.$refs.carInfoForm.validate((valid) => {
+        if (valid) {
+          // 第二个表单校验
+          this.$refs.feeForm.validate(async (valid) => {
+            if (valid) {
+              const reqData = {
+                ...this.carInfoForm,
+                ...this.feeForm,
+                cardStartDate: this.feeForm.payTime[0],
+                cardEndDate: this.feeForm.payTime[1],
+              };
+              delete reqData.payTime;
+
+              this.$message.success(`${this.id ? "更新成功" : "新增成功"}`);
+              this.$router.back();
+            }
+          });
+        }
+      });
+    },
   },
 };
 </script>
