@@ -24,8 +24,10 @@
         <div v-for="item in treeList" :key="item.id" class="tree-item">
           <div class="tree-title">{{ item.title }}</div>
           <el-tree
+            ref="tree"
             :data="item.children"
             :props="defaultProps"
+            node-key="id"
             :show-checkbox="true"
             default-expand-all />
         </div>
@@ -35,7 +37,7 @@
 </template>
 
 <script>
-import { getRoleListAPI, getTreeListAPI } from '@/services'
+import { getRoleListAPI, getTreeListAPI, getRoleDetailAPI } from '@/services'
 function addDisabled(treeList) {
   treeList.forEach((item) => {
     item.disabled = true
@@ -53,7 +55,8 @@ export default {
       treeList: [],
       defaultProps: {
         children: 'children',
-        label: 'title'
+        label: 'title',
+        disabled: () => true
       }
     }
   },
@@ -62,8 +65,17 @@ export default {
     this.getTreeList()
   },
   methods: {
-    switchTab(index) {
+    async switchTab(index) {
       this.currentIndex = index
+      // 1. 拿到当前的角色id
+      const roleId = this.roleList[index].roleId
+      // 2. 使用id获取高亮权限点列表
+      const res = await getRoleDetailAPI(roleId)
+      const perms = res.data.perms
+      // 3. 遍历tree实例组成的数组 分别调用它身上的高亮方法 传入需要高亮的权限点数据
+      this.$refs.tree.forEach((treeInstance, index) => {
+        treeInstance.setCheckedKeys(perms[index])
+      })
     },
     async getRoleList() {
       const res = await getRoleListAPI()
