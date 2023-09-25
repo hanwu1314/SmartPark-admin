@@ -18,14 +18,50 @@
     </div>
     <!-- 表格区域 -->
     <div class="table">
-      <el-table style="width: 100%" :data="list">
+      <el-table style="width: 100%" :data="list" @expand-change="expandChange">
+        <el-table-column type="expand">
+          <template #default="{ row }">
+            <el-table :data="row.rentList">
+              <el-table-column
+                label="租赁楼宇"
+                width="320"
+                prop="buildingName" />
+              <el-table-column label="租赁起始时间" prop="startTime" />
+              <el-table-column label="合同状态">
+                <template #default="scope">
+                  <el-tag :type="formatInfoType(scope.row.status)">
+                    {{ formatStatus(scope.row.status) }}</el-tag
+                  >
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" width="180">
+                <template #default="scope">
+                  <el-button
+                    size="mini"
+                    :disabled="scope.row.status === 3"
+                    type="text"
+                    @click="outRent(scope.row.id)"
+                    >退租</el-button
+                  >
+                  <el-button
+                    size="mini"
+                    :disabled="scope.row.status !== 3"
+                    type="text"
+                    @click="delRent(scope.row.id)"
+                    >删除</el-button
+                  >
+                </template>
+              </el-table-column>
+            </el-table>
+          </template>
+        </el-table-column>
         <el-table-column type="index" label="序号" />
         <el-table-column label="企业名称" width="320" prop="name" />
         <el-table-column label="联系人" prop="contact" />
         <el-table-column label="联系电话" prop="contactNumber" />
         <el-table-column label="操作">
           <template #default="{ row }">
-            <el-button size="mini" type="text" @click="addRent"
+            <el-button size="mini" type="text" @click="addRent(row.id)"
               >添加合同</el-button
             >
             <el-button size="mini" type="text">查看</el-button>
@@ -90,9 +126,7 @@
       </div>
       <template #footer>
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="confirmSubmit">确 定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -102,9 +136,12 @@
 import {
   getEnterpriseAPI,
   delExterpriseAPI,
-  getBuildingListAPI,
   uploadAPI,
-  getBuildingRentListAPI
+  getBuildingRentListAPI,
+  createRentAPI,
+  outRentAPI,
+  getRentListAPI,
+  delRentListAPI
 } from '@/services'
 export default {
   data() {
@@ -148,9 +185,60 @@ export default {
     this.getlist()
   },
   methods: {
+    async outRent(id) {
+      this.$confirm('确认退租吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          await outRentAPI(id)
+          this.$message({
+            type: 'success',
+            message: '退租成功!'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          })
+        })
+    },
+    formatInfoType(status) {
+      const MAP = {
+        0: 'warning',
+        1: 'success',
+        2: 'info',
+        3: 'danger'
+      }
+      return MAP[status]
+    },
+    formatStatus(status) {
+      const MAP = {
+        0: '待生效',
+        1: '生效中',
+        2: '已到期',
+        3: '已退租'
+      }
+      return MAP[status]
+    },
+    async expandChange(row, rows) {
+      const item = rows.find((item) => item.id === row.id)
+      if (item) {
+        const res = await getRentListAPI(row.id)
+        row.rentList = res.data
+      }
+    },
+
     async getlist() {
       const res = await getEnterpriseAPI(this.params)
-      this.list = res.data.rows
+      this.list = res.data.rows.map((item) => {
+        return {
+          ...item,
+          rentList: [] // 合同列表
+        }
+      })
       this.total = res.data.total
     },
     async getBuildList() {
@@ -197,8 +285,16 @@ export default {
           })
         })
     },
-    addRent() {
+    addRent(id) {
       this.dialogVisible = true
+      this.rentForm.enterpriseId = id
+    },
+    async delRent(id) {
+      const res = await delRentListAPI(id)
+      this.$message({
+        type: 'success',
+        message: res.msg
+      })
     },
     closeDialog() {
       this.dialogVisible = false
@@ -219,10 +315,39 @@ export default {
       this.rentForm.contractUrl = url
 
       this.$refs.addForm.validate('contractID')
+    },
+    confirmSubmit() {
+      this.$refs.addForm.validate(async (valid) => {
+        if (valid) {
+          const { buildingId, contractId, contractUrl, type, enterpriseId } =
+            this.rentForm
+          const rentData = {
+            buildingId,
+            startTime: this.rentForm.rentTime[0],
+            endTime: this.rentForm.rentTime[1],
+            contractId,
+            contractUrl,
+            type,
+            enterpriseId
+          }
+          createRentAPI(rentData)
+          this.dialogVisible = false
+          this.$refs.addForm.resetFields()
 
-      this.$message({
-        type: 'success',
-        message: '添加成功!'
+          this.$message({
+            type: 'success',
+            message: '添加合同成功'
+          })
+
+          this.rentForm = {
+            buildingId: null,
+            contractId: null,
+            contractUrl: '',
+            enterpriseId: null,
+            type: 0,
+            rentTime: []
+          }
+        }
       })
     }
   }

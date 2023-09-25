@@ -34,17 +34,6 @@ export function getIndustryListAPI() {
 }
 
 /**
- * 上传合同
- * @returns
- */
-export function uploadAPI(data) {
-  return hwRequest.post({
-    url: '/upload',
-    data
-  })
-}
-
-/**
  * 创建企业
  * @param {*} data
  * @returns
@@ -87,5 +76,50 @@ export function updateEnterpriseAPI(data) {
 export function delExterpriseAPI(id) {
   return hwRequest.delete({
     url: `/park/enterprise/${id}`
+  })
+}
+/**
+ * 创建合同
+ * @param {*}
+ * @returns
+ */
+export function createRentAPI(data) {
+  return hwRequest.post({
+    url: '/park/enterprise/rent',
+    data
+  })
+}
+
+/**
+ * 退租
+ * @param {合同id} rentId
+ * @returns
+ */
+
+export function outRentAPI(rentId) {
+  return hwRequest.put({
+    url: `/park/enterprise/rent/${rentId}`
+  })
+}
+
+/**
+ * 获取合同列表
+ * @param {*} id
+ * @returns
+ */
+export function getRentListAPI(id) {
+  return hwRequest.get({
+    url: `/park/enterprise/rent/${id}`
+  })
+}
+
+/**
+ * 删除租赁合同
+ * @param {*} id
+ * @returns
+ */
+export function delRentListAPI(id) {
+  return hwRequest.delete({
+    url: `/park/enterprise/rent/${id}`
   })
 }
