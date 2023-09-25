@@ -78,3 +78,14 @@ export function updateEnterpriseAPI(data) {
     data
   })
 }
+
+/**
+ * 删除企业
+ * @param {*} id
+ * @returns
+ */
+export function delExterpriseAPI(id) {
+  return hwRequest.delete({
+    url: `/park/enterprise/${id}`
+  })
+}

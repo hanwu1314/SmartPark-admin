@@ -30,7 +30,9 @@
             <el-button size="mini" type="text" @click="editEnterprise(row.id)"
               >编辑</el-button
             >
-            <el-button size="mini" type="text">删除</el-button>
+            <el-button size="mini" type="text" @click="delEnterprise(row.id)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -46,7 +48,7 @@
 </template>
 
 <script>
-import { getEnterpriseAPI } from '@/services'
+import { getEnterpriseAPI, delExterpriseAPI } from '@/services'
 export default {
   data() {
     return {
@@ -86,6 +88,27 @@ export default {
           id
         }
       })
+    },
+    delEnterprise(id) {
+      this.$confirm('确认删除企业吗, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          await delExterpriseAPI(id)
+          this.getList()
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     }
   }
 }
