@@ -2,7 +2,7 @@
   <div class="rule-container">
     <div class="create-container">
       <el-button type="primary" @click="addRule">增加停车计费规则</el-button>
-      <el-button>导出Excel</el-button>
+      <el-button @click="exportExcel">导出Excel</el-button>
     </div>
     <!-- 表格区域 -->
     <div class="table">
@@ -54,6 +54,7 @@
 
 <script>
 import { getRuleListAPI } from '@/services'
+import { utils, writeFileXLSX } from 'xlsx'
 export default {
   name: 'Building',
   data() {
@@ -64,7 +65,7 @@ export default {
         pageSize: 10
       },
       total: 0,
-      dialogVisible: true,
+      dialogVisible: false,
       addForm: {
         ruleNumber: '', // 计费规则编号
         ruleName: '', // 计费规则名称
@@ -112,6 +113,36 @@ export default {
     this.getList()
   },
   methods: {
+    async exportExcel() {
+      const workbook = utils.book_new()
+      const res = await getRuleListAPI(this.params)
+
+      // 定义表头映射关系
+      const headerMapping = {
+        ruleNumber: '计费规则编号',
+        ruleName: '计费规则名称',
+        freeDuration: '免费时长(分钟)',
+        chargeCeiling: '收费上线(元)',
+        chargeType: '计费方式',
+        ruleNameView: '计费规则'
+      }
+      const sheetData = res.data.rows.map((item) => {
+        const rowData = {}
+        Object.keys(headerMapping).forEach((key) => {
+          rowData[key] =
+            key === 'chargeType' ? this.formChargeType(item[key]) : item[key]
+        })
+        return rowData
+      })
+      const worksheet = utils.json_to_sheet(sheetData)
+      // 把工作表添加到工作簿  Data为工作表名称
+      utils.book_append_sheet(workbook, worksheet, 'Data')
+      // 添加表头
+      const headerRow = Object.values(headerMapping)
+      utils.sheet_add_aoa(worksheet, [headerRow], { origin: 'A1' })
+      // 导出方法进行导出
+      writeFileXLSX(workbook, 'SheetJSVueAoO.xlsx')
+    },
     async getList() {
       const res = await getRuleListAPI(this.params)
       this.ruleList = res.data.rows
