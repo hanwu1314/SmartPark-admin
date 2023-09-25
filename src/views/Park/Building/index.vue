@@ -11,18 +11,16 @@
         class="search-main" />
       <el-button type="primary" @click="doSearch">查询</el-button>
       <el-button type="primary" @click="addBuilding">添加楼宇</el-button>
+      <el-button type="primary" @click="exportToExcel">导出Execl</el-button>
     </div>
     <!-- 表格区域 -->
     <div class="table">
       <el-table style="width: 100%" :data="buildingList">
         <el-table-column type="index" label="序号" />
-        <el-table-column label="楼宇名称" width="180" prop="name" />
+        <el-table-column label="楼宇名称" prop="name" />
         <el-table-column label="层数" prop="floors" />
-        <el-table-column label="在管面积(m²)" width="120" prop="area" />
-        <el-table-column
-          label="物业费(元/m²)"
-          width="120"
-          prop="propertyFeePrice" />
+        <el-table-column label="在管面积(m²)" prop="area" />
+        <el-table-column label="物业费(元/m²)" prop="propertyFeePrice" />
         <el-table-column label="状态" prop="status">
           <template #default="scope">
             {{ formatStatus(scope.row.status) }}
@@ -78,6 +76,7 @@
 </template>
 
 <script>
+import { utils, writeFileXLSX } from 'xlsx'
 import {
   getBuildingListAPI,
   createBuildingListAPI,
@@ -119,6 +118,38 @@ export default {
     this.getBuildingList()
   },
   methods: {
+    async exportToExcel() {
+      const res = await getBuildingListAPI(this.params)
+      const tableHeader = [
+        'name',
+        'floors',
+        'area',
+        'propertyFeePrice',
+        'status'
+      ]
+      // 处理数据保证
+      const sheetData = res.data.rows.map((item) => {
+        const _item = {}
+        let obj = []
+        tableHeader.forEach((key) => {
+          obj[key] = item[key]
+        })
+        return obj
+      })
+      // 创建一个工作表
+      const worksheet = utils.json_to_sheet(sheetData)
+      // 创建一个新的工作簿
+      const workbook = utils.book_new()
+      // 把工作表添加到工作簿
+      utils.book_append_sheet(workbook, worksheet, 'Data')
+      // 改写表头
+      utils.sheet_add_aoa(
+        worksheet,
+        [['楼宇名称', '层数', '在管面积(㎡)', '物业费(元/㎡)', '状态']],
+        { origin: 'A1' }
+      )
+      writeFileXLSX(workbook, 'SheetJSVueAoO.xlsx')
+    },
     async getBuildingList() {
       const res = await getBuildingListAPI(this.params)
       this.buildingList = res.data.rows
