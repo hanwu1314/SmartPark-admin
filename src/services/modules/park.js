@@ -32,3 +32,14 @@ export function getIndustryListAPI() {
     url: '/park/industry'
   })
 }
+
+/**
+ * 上传合同
+ * @returns
+ */
+export function uploadAPI(data) {
+  return hwRequest.post({
+    url: '/upload',
+    data
+  })
+}

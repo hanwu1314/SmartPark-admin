@@ -14,17 +14,21 @@
       <div class="form-container">
         <div class="title">企业信息</div>
         <div class="form">
-          <el-form ref="ruleForm" :model="addForm" label-width="100px">
+          <el-form
+            ref="ruleForm"
+            :model="addForm"
+            :rules="addRules"
+            label-width="100px">
             <el-form-item label="企业名称" prop="name">
               <el-input v-model="addForm.name" />
             </el-form-item>
-            <el-form-item label="法人" prop="name">
+            <el-form-item label="法人" prop="legalPerson">
               <el-input v-model="addForm.legalPerson" />
             </el-form-item>
-            <el-form-item label="注册地址" prop="name">
+            <el-form-item label="注册地址" prop="registeredAddress">
               <el-input v-model="addForm.registeredAddress" />
             </el-form-item>
-            <el-form-item label="所在行业" prop="name">
+            <el-form-item label="所在行业" prop="industryCode">
               <el-select v-model="addForm.industryCode" @focus="selectFocus">
                 <el-option
                   v-for="item in industryList"
@@ -33,13 +37,25 @@
                   :label="item.industryName" />
               </el-select>
             </el-form-item>
-            <el-form-item label="企业联系人" prop="name">
+            <el-form-item label="企业联系人" prop="contact">
               <el-input v-model="addForm.contact" />
             </el-form-item>
-            <el-form-item label="联系电话" prop="name">
+            <el-form-item label="联系电话" prop="contactNumber">
               <el-input v-model="addForm.contactNumber" />
             </el-form-item>
-            <el-form-item label="营业执照" prop="name" />
+            <el-form-item label="营业执照" prop="businessLicenseId">
+              <el-upload
+                class="upload-demo"
+                action="#"
+                :http-request="upload"
+                :before-upload="beforeUpload">
+                <el-button size="small" type="primary">点击上传</el-button>
+                <div slot="tip" class="el-upload__tip">
+                  只能上传png图片，且不超过5M
+                </div>
+              </el-upload>
+              <!-- <img :src="addForm.businessLicenseUrl" class="img" /> -->
+            </el-form-item>
           </el-form>
         </div>
       </div>
@@ -47,16 +63,23 @@
     <footer class="add-footer">
       <div class="btn-container">
         <el-button>重置</el-button>
-        <el-button type="primary">确定</el-button>
+        <el-button type="primary" @click="confirmAdd">确定</el-button>
       </div>
     </footer>
   </div>
 </template>
 
 <script>
-import { getIndustryListAPI } from '@/services'
+import { getIndustryListAPI, uploadAPI } from '@/services'
 export default {
   data() {
+    const validatePhone = (rule, value, cb) => {
+      if (/^1[3-9]\d{9}$/.test(value)) {
+        cb()
+      } else {
+        cb(new Error('请输入正确的手机号'))
+      }
+    }
     return {
       addForm: {
         /** 企业名称 */
@@ -77,7 +100,29 @@ export default {
         businessLicenseId: ''
       },
       /** 行业列表 */
-      industryList: []
+      industryList: [],
+      addRules: {
+        name: [{ required: true, message: '企业名称为必填', trigger: 'blur' }],
+        legalPerson: [
+          { required: true, message: '法人为必填', trigger: 'blur' }
+        ],
+        registeredAddress: [
+          { required: true, message: '注册地址为必填', trigger: 'blur' }
+        ],
+        industryCode: [
+          { required: true, message: '所在行业为必填', trigger: 'change' }
+        ],
+        contact: [
+          { required: true, message: '企业联系人为必填', trigger: 'blur' }
+        ],
+        contactNumber: [
+          { required: true, message: '企业联系人电话为必填', trigger: 'blur' },
+          { validator: validatePhone, trigger: 'blur' }
+        ],
+        businessLicenseId: [
+          { required: true, message: '请上传营业执照', trigger: 'blur' }
+        ]
+      }
     }
   },
   mounted() {},
@@ -88,6 +133,36 @@ export default {
     },
     selectFocus() {
       this.getIndustryList()
+    },
+    async upload(res) {
+      const { file } = res
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('type', 'businessLicense')
+
+      const _res = await uploadAPI(fd)
+      this.addForm.businessLicenseId = _res.data.id
+      this.addForm.businessLicenseUrl = _res.data.url
+
+      this.$refs.ruleForm.validateField('businessLicenseId')
+    },
+    beforeUpload(file) {
+      const isPNG = file.type === 'image/png'
+      const isLt5M = file.size / 1024 / 1024 < 5
+
+      if (!isPNG) {
+        this.$message.error('上传合同文件只能是 PNG 格式!')
+      }
+      if (!isLt5M) {
+        this.$message.error('上传合同文件大小不能超过5MB!')
+      }
+      return isPNG && isLt5M
+    },
+    confirmAdd() {
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+        }
+      })
     }
   }
 }
@@ -156,6 +231,11 @@ export default {
     font-size: 14px;
     background: #fff;
     text-align: center;
+  }
+  .img {
+    width: 150px;
+    height: 150px;
+    border-radius: 4px;
   }
 }
 </style>
