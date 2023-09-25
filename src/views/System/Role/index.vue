@@ -1,9 +1,16 @@
 <template>
   <div class="role-container">
     <div class="left-wrapper">
-      <div v-for="item in roleList" :key="item.roleId" class="role-item">
+      <div
+        v-for="(item, index) in roleList"
+        :key="item.roleId"
+        class="role-item"
+        :class="{ active: currentIndex === index }"
+        @click="switchTab(index)">
         <div class="role-info">
-          <svg-icon icon-class="user" class="icon" />
+          <svg-icon
+            :icon-class="currentIndex === index ? 'user-active' : 'user'"
+            class="icon" />
           {{ item.roleName }}
         </div>
         <div class="more">
@@ -12,23 +19,35 @@
       </div>
       <el-button class="addBtn" size="mini">添加角色</el-button>
     </div>
+    <div class="right-wrapper">
+      <div class="tree-wrapper">
+        <div v-for="item in treeList" :key="item.id" class="tree-item">
+          <div class="tree-title">{{ item.title }}</div>
+          <el-tree :data="item.children" :props="defaultProps" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { getRoleListAPI } from '@/services'
+import { getRoleListAPI, getTreeListAPI } from '@/services'
 
 export default {
   name: 'Role',
   data() {
     return {
-      roleList: [] // 角色列表
+      roleList: [],
+      currentIndex: 0
     }
   },
   mounted() {
     this.getRoleList()
   },
   methods: {
+    switchTab(index) {
+      this.currentIndex = index
+    },
     async getRoleList() {
       const res = await getRoleListAPI()
       this.roleList = res.data
@@ -42,7 +61,7 @@ export default {
   display: flex;
   font-size: 14px;
   background-color: #fff;
-  padding: 20px;
+  padding: 10px;
   .left-wrapper {
     width: 200px;
     border-right: 1px solid #e4e7ec;
