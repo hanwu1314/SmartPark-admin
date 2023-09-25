@@ -29,9 +29,13 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" width="120">
-          <template #default="scope">
-            <el-button size="mini" type="text">编辑</el-button>
-            <el-button size="mini" type="text">删除</el-button>
+          <template #default="{ row }">
+            <el-button size="mini" type="text" @click="EditConfirm(row)"
+              >编辑</el-button
+            >
+            <el-button size="mini" type="text" @click="delConfirm(row.id)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -74,7 +78,12 @@
 </template>
 
 <script>
-import { getBuildingListAPI, createBuildingListAPI } from '@/services'
+import {
+  getBuildingListAPI,
+  createBuildingListAPI,
+  delBuildingListAPI,
+  updateEnterpriseAPI
+} from '@/services'
 export default {
   name: 'Building',
   data() {
@@ -132,6 +141,12 @@ export default {
     },
     addBuilding() {
       this.dialogVisible = true
+      this.addForm = {
+        name: '',
+        floors: null,
+        area: null,
+        propertyFeePrice: null
+      }
     },
     closeDialog() {
       this.dialogVisible = false
@@ -139,11 +154,39 @@ export default {
     confirmAdd() {
       this.$refs.addForm.validate(async (valid) => {
         if (valid) {
-          await createBuildingListAPI(this.addForm)
+          if (this.addForm.id) {
+            await updateEnterpriseAPI(this.addForm)
+          } else {
+            await createBuildingListAPI(this.addForm)
+          }
           this.getBuildingList()
           this.dialogVisible = false
         }
       })
+    },
+    delConfirm(id) {
+      this.$confirm('确认删除当前楼宇吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          await delBuildingListAPI(id)
+          this.getBuildingList()
+          this.$message.success('删除成功')
+        })
+        .catch(() => {})
+    },
+    EditConfirm(row) {
+      this.dialogVisible = true
+      let { id, area, floors, name, propertyFeePrice } = row
+      this.addForm = {
+        id,
+        area,
+        floors,
+        name,
+        propertyFeePrice: 3
+      }
     }
   }
 }

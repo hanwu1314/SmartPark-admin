@@ -22,3 +22,26 @@ export function createBuildingListAPI(data) {
     data
   })
 }
+
+/**
+ * 删除楼宇
+ * @param {*} data
+ * @returns
+ */
+export function delBuildingListAPI(id) {
+  return hwRequest.delete({
+    url: `/park/building/${id}`
+  })
+}
+
+/**
+ * 编辑楼宇
+ * @param {*} data
+ * @returns
+ */
+export function updateEnterpriseAPI(data) {
+  return hwRequest.put({
+    url: `/park/building`,
+    data
+  })
+}
