@@ -3,8 +3,13 @@
     <!-- 搜索区域 -->
     <div class="search-container">
       <div class="search-label">楼宇名称：</div>
-      <el-input placeholder="请输入内容" class="search-main" />
-      <el-button type="primary">查询</el-button>
+      <el-input
+        placeholder="请输入内容"
+        @clear="doSearch"
+        clearable
+        v-model="params.name"
+        class="search-main" />
+      <el-button type="primary" @click="doSearch">查询</el-button>
     </div>
     <!-- 表格区域 -->
     <div class="table">
@@ -30,6 +35,12 @@
         </el-table-column>
       </el-table>
     </div>
+    <div class="page-container">
+      <el-pagination
+        layout="total, prev, pager, next"
+        :total="total"
+        @current-change="pageChange" />
+    </div>
   </div>
 </template>
 
@@ -43,8 +54,10 @@ export default {
       params: {
         // 请求参数
         page: 1,
-        pageSize: 10
-      }
+        pageSize: 10,
+        name: ''
+      },
+      total: 0
     }
   },
   mounted() {
@@ -54,6 +67,7 @@ export default {
     async getBuildingList() {
       const res = await getBuildingListAPI(this.params)
       this.buildingList = res.data.rows
+      this.total = res.data.total
     },
     formatStatus(status) {
       const statusMap = {
@@ -61,6 +75,14 @@ export default {
         1: '闲置中'
       }
       return statusMap[status]
+    },
+    pageChange(page) {
+      this.params.page = page
+      this.getBuildingList()
+    },
+    doSearch() {
+      this.params.page = 1
+      this.getBuildingList()
     }
   }
 }
@@ -82,5 +104,9 @@ export default {
     width: 220px;
     margin-right: 10px;
   }
+}
+.page-container {
+  padding: 4px 0px;
+  text-align: right;
 }
 </style>
