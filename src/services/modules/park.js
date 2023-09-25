@@ -22,3 +22,13 @@ export function delEnterPriseAPI(id) {
     url: `/park/enterprise/${id}`
   })
 }
+
+/**
+ * 获取行业列表
+ * @returns
+ */
+export function getIndustryListAPI() {
+  return hwRequest.get({
+    url: '/park/industry'
+  })
+}
