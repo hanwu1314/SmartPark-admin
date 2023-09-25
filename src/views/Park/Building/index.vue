@@ -47,10 +47,25 @@
       :visible="dialogVisible"
       width="580px"
       @close="closeDialog">
-      <span>这是一段信息</span>
+      <div class="form-container">
+        <el-form :model="addForm" :rules="addFormRules" ref="addForm">
+          <el-form-item label="楼宇名称" prop="name">
+            <el-input v-model="addForm.name" />
+          </el-form-item>
+          <el-form-item label="楼宇层数" prop="floors">
+            <el-input v-model="addForm.floors" />
+          </el-form-item>
+          <el-form-item label="在管面积" prop="area">
+            <el-input v-model="addForm.area" />
+          </el-form-item>
+          <el-form-item label="物业费" prop="propertyFeePrice">
+            <el-input v-model="addForm.propertyFeePrice" />
+          </el-form-item>
+        </el-form>
+      </div>
       <template #footer>
         <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="dialogVisible = false"
+        <el-button size="mini" type="primary" @click="confirmAdd"
           >确 定</el-button
         >
       </template>
@@ -72,7 +87,23 @@ export default {
         name: ''
       },
       total: 0,
-      dialogVisible: false
+      dialogVisible: false,
+      addForm: {
+        name: '',
+        floors: null,
+        area: null,
+        propertyFeePrice: null
+      },
+      addFormRules: {
+        name: [{ required: true, message: '请输入楼宇名称', trigger: 'blur' }],
+        floors: [
+          { required: true, message: '请输入楼宇层数', trigger: 'blur' }
+        ],
+        area: [{ required: true, message: '请输入楼宇面积', trigger: 'blur' }],
+        propertyFeePrice: [
+          { required: true, message: '请输入楼宇物业费', trigger: 'blur' }
+        ]
+      }
     }
   },
   mounted() {
@@ -104,6 +135,13 @@ export default {
     },
     closeDialog() {
       this.dialogVisible = false
+    },
+    confirmAdd() {
+      this.$refs.addForm.validate((valid) => {
+        if (valid) {
+          console.log('添加')
+        }
+      })
     }
   }
 }
