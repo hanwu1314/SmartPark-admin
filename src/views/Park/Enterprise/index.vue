@@ -25,7 +25,9 @@
         <el-table-column label="联系电话" prop="contactNumber" />
         <el-table-column label="操作">
           <template #default="{ row }">
-            <el-button size="mini" type="text">添加合同</el-button>
+            <el-button size="mini" type="text" @click="addRent"
+              >添加合同</el-button
+            >
             <el-button size="mini" type="text">查看</el-button>
             <el-button size="mini" type="text" @click="editEnterprise(row.id)"
               >编辑</el-button
@@ -44,6 +46,19 @@
         @current-change="pageChange"
         layout="total, prev, pager, next" />
     </div>
+    <el-dialog
+      title="提示"
+      :visible="dialogVisible"
+      width="30%"
+      @close="closeDialog">
+      <span>这是一段信息</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -58,7 +73,8 @@ export default {
         page: 1,
         pageSize: 2
       },
-      total: 0
+      total: 0,
+      dialogVisible: true
     }
   },
   mounted() {
@@ -109,6 +125,12 @@ export default {
             message: '已取消删除'
           })
         })
+    },
+    addRent() {
+      this.dialogVisible = true
+    },
+    closeDialog() {
+      this.dialogVisible = false
     }
   }
 }
