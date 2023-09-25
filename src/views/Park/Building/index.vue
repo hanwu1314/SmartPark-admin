@@ -10,6 +10,7 @@
         v-model="params.name"
         class="search-main" />
       <el-button type="primary" @click="doSearch">查询</el-button>
+      <el-button type="primary" @click="addBuilding">添加楼宇</el-button>
     </div>
     <!-- 表格区域 -->
     <div class="table">
@@ -41,6 +42,19 @@
         :total="total"
         @current-change="pageChange" />
     </div>
+    <el-dialog
+      title="添加楼宇"
+      :visible="dialogVisible"
+      width="580px"
+      @close="closeDialog">
+      <span>这是一段信息</span>
+      <template #footer>
+        <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="dialogVisible = false"
+          >确 定</el-button
+        >
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -57,7 +71,8 @@ export default {
         pageSize: 10,
         name: ''
       },
-      total: 0
+      total: 0,
+      dialogVisible: false
     }
   },
   mounted() {
@@ -83,6 +98,12 @@ export default {
     doSearch() {
       this.params.page = 1
       this.getBuildingList()
+    },
+    addBuilding() {
+      this.dialogVisible = true
+    },
+    closeDialog() {
+      this.dialogVisible = false
     }
   }
 }
