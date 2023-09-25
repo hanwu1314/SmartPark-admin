@@ -77,7 +77,7 @@
               value-format="yyyy-MM-dd" />
           </el-form-item>
           <el-form-item label="租赁合同" prop="contractId">
-            <el-upload action="#">
+            <el-upload action="#" :http-request="uploadHandle">
               <el-button size="small" type="primary" plain
                 >上传合同文件</el-button
               >
@@ -102,7 +102,9 @@
 import {
   getEnterpriseAPI,
   delExterpriseAPI,
-  getBuildingListAPI
+  getBuildingListAPI,
+  uploadAPI,
+  getBuildingRentListAPI
 } from '@/services'
 export default {
   data() {
@@ -152,8 +154,8 @@ export default {
       this.total = res.data.total
     },
     async getBuildList() {
-      const res = await getBuildingListAPI()
-      this.buildingList = res.data.rows
+      const res = await getBuildingRentListAPI()
+      this.buildingList = res.data
     },
     pageChange(page) {
       this.params.page = page
@@ -203,6 +205,25 @@ export default {
     },
     openDialog() {
       this.getBuildList()
+    },
+    async uploadHandle(fileData) {
+      const { file } = fileData
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('type', 'contract')
+
+      const res = await uploadAPI(formData)
+      const { id, url } = res.data
+
+      this.rentForm.contractId = id
+      this.rentForm.contractUrl = url
+
+      this.$refs.addForm.validate('contractID')
+
+      this.$message({
+        type: 'success',
+        message: '添加成功!'
+      })
     }
   }
 }

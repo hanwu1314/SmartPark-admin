@@ -45,3 +45,14 @@ export function updateEnterpriseAPI(data) {
     data
   })
 }
+
+/**
+ * 查询可租赁楼宇
+ * @param {*} data
+ * @returns
+ */
+export function getBuildingRentListAPI() {
+  return hwRequest.get({
+    url: '/park/rent/building'
+  })
+}
