@@ -7,6 +7,7 @@
         v-model="params.name"
         clearable
         placeholder="请输入内容"
+        @clear="clearSearch"
         class="search-main" />
       <el-button type="primary" @click="doSearch">查询</el-button>
     </div>
@@ -69,6 +70,9 @@ export default {
     },
     doSearch() {
       this.params.page = 1
+      this.getlist()
+    },
+    clearSearch() {
       this.getlist()
     }
   }
