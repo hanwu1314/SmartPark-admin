@@ -47,23 +47,63 @@
         layout="total, prev, pager, next" />
     </div>
     <el-dialog
-      title="提示"
+      title="添加合同"
       :visible="dialogVisible"
-      width="30%"
-      @close="closeDialog">
-      <span>这是一段信息</span>
-      <span slot="footer" class="dialog-footer">
+      width="580px"
+      @close="closeDialog"
+      @open="openDialog">
+      <div class="form-container">
+        <el-form
+          ref="addForm"
+          :model="rentForm"
+          :rules="rentRules"
+          label-position="top">
+          <el-form-item label="租赁楼宇" prop="buildingId">
+            <el-select v-model="rentForm.buildingId" placeholder="请选择">
+              <el-option
+                v-for="item in buildingList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="租赁起止日期" prop="rentTime">
+            <el-date-picker
+              v-model="rentForm.rentTime"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              value-format="yyyy-MM-dd" />
+          </el-form-item>
+          <el-form-item label="租赁合同" prop="contractId">
+            <el-upload action="#">
+              <el-button size="small" type="primary" plain
+                >上传合同文件</el-button
+              >
+              <div slot="tip" class="el-upload__tip">
+                支持扩展名：.doc .docx .pdf, 文件大小不超过5M
+              </div>
+            </el-upload>
+          </el-form-item>
+        </el-form>
+      </div>
+      <template #footer>
         <el-button @click="dialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="dialogVisible = false"
           >确 定</el-button
         >
-      </span>
+      </template>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getEnterpriseAPI, delExterpriseAPI } from '@/services'
+import {
+  getEnterpriseAPI,
+  delExterpriseAPI,
+  getBuildingListAPI
+} from '@/services'
 export default {
   data() {
     return {
@@ -71,10 +111,35 @@ export default {
       params: {
         name: '',
         page: 1,
-        pageSize: 2
+        pageSize: 10
       },
       total: 0,
-      dialogVisible: true
+      dialogVisible: false,
+      rentForm: {
+        /**楼宇id */
+        buildingId: null,
+        /**合同id */
+        contractId: null,
+        /**合同Url */
+        contractUrl: '',
+        /**企业名称 */
+        enterpriseId: null,
+        /**合同类型 */
+        type: 0,
+        /**合同时间 */
+        rentTime: []
+      },
+      rentRules: {
+        buildingId: [
+          { required: true, message: '请选择楼宇', trigger: 'change' }
+        ],
+        rentTime: [
+          { required: true, message: '请选择租赁日期', trigger: 'change' }
+        ],
+        contractId: [{ required: true, message: '请上传合同文件' }]
+      },
+      /**楼宇列表 */
+      buildingList: []
     }
   },
   mounted() {
@@ -85,6 +150,10 @@ export default {
       const res = await getEnterpriseAPI(this.params)
       this.list = res.data.rows
       this.total = res.data.total
+    },
+    async getBuildList() {
+      const res = await getBuildingListAPI()
+      this.buildingList = res.data.rows
     },
     pageChange(page) {
       this.params.page = page
@@ -131,6 +200,9 @@ export default {
     },
     closeDialog() {
       this.dialogVisible = false
+    },
+    openDialog() {
+      this.getBuildList()
     }
   }
 }
