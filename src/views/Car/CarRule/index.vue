@@ -1,7 +1,7 @@
 <template>
   <div class="rule-container">
     <div class="create-container">
-      <el-button type="primary">增加停车计费规则</el-button>
+      <el-button type="primary" @click="addRule">增加停车计费规则</el-button>
       <el-button>导出Excel</el-button>
     </div>
     <!-- 表格区域 -->
@@ -19,9 +19,13 @@
         </el-table-column>
         <el-table-column label="计费规则" prop="ruleNameView" />
         <el-table-column label="操作" fixed="right" width="120">
-          <template #default="scope">
-            <el-button size="mini" type="text">编辑</el-button>
-            <el-button size="mini" type="text">删除</el-button>
+          <template #default="{ row }">
+            <el-button size="mini" type="text" @click="editRule(row.id)"
+              >编辑</el-button
+            >
+            <el-button size="mini" type="text" @click="delRule(row.id)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -32,6 +36,19 @@
         :page-size="params.pageSize"
         @current-change="pageChange" />
     </div>
+
+    <el-dialog
+      width="680px"
+      title="新增规则"
+      :visible="dialogVisible"
+      @close="closeDialog"
+      @open="openDialog">
+      <div class="form-container"></div>
+      <template #footer>
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmSubmit">确 定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -47,7 +64,48 @@ export default {
         pageSize: 10
       },
       total: 0,
-      dialogVisible: false
+      dialogVisible: true,
+      addForm: {
+        ruleNumber: '', // 计费规则编号
+        ruleName: '', // 计费规则名称
+        chargeType: 'duration', // 计费规则类型 duration / turn / partition
+        chargeCeiling: null,
+        freeDuration: null,
+        // 时长计费独有字段
+        durationTime: null, // 时长计费单位时间
+        durationPrice: null, // 时长计费单位价格
+        durationType: 'hour',
+        // 按次收费独有字段
+        turnPrice: null,
+        // 分段计费独有字段
+        partitionFrameTime: null, // 段内时间
+        partitionFramePrice: null, // 段内费用
+        partitionIncreaseTime: null, // 超出时间
+        partitionIncreasePrice: null // 超出费为收费价钱
+      },
+      addFormRules: {
+        ruleNumber: [
+          {
+            required: true,
+            message: '请输入规则编号',
+            trigger: 'blur'
+          }
+        ],
+        ruleName: [
+          {
+            required: true,
+            message: '请输入规则名称',
+            trigger: 'blur'
+          }
+        ],
+        chargeType: [
+          {
+            required: true,
+            message: '请选择收费类型',
+            trigger: 'blur'
+          }
+        ]
+      }
     }
   },
   mounted() {
@@ -70,6 +128,25 @@ export default {
         partition: '分段收费'
       }
       return MAP[chargeType]
+    },
+    closeDialog() {
+      this.dialogVisible = false
+    },
+    openDialog() {
+      console.log('打开的回调函数')
+    },
+    addRule() {
+      this.dialogVisible = true
+      console.log('添加规则')
+    },
+    confirmSubmit() {
+      console.log('确定')
+    },
+    editRule(id) {
+      console.log('编辑：', id)
+    },
+    delRule(id) {
+      console.log('删除：', id)
     }
   }
 }
