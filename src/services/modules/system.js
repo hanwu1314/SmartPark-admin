@@ -11,3 +11,13 @@ export function getRoleListAPI(params) {
     params
   })
 }
+
+/**
+ * 获取tree权限列表
+ * @returns
+ */
+export function getTreeListAPI() {
+  return hwRequest.get({
+    url: '/park/sys/permision/all/tree'
+  })
+}

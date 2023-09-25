@@ -38,11 +38,17 @@ export default {
   data() {
     return {
       roleList: [],
-      currentIndex: 0
+      currentIndex: 0,
+      treeList: [],
+      defaultProps: {
+        children: 'children',
+        label: 'title'
+      }
     }
   },
   mounted() {
     this.getRoleList()
+    this.getTreeList()
   },
   methods: {
     switchTab(index) {
@@ -51,6 +57,10 @@ export default {
     async getRoleList() {
       const res = await getRoleListAPI()
       this.roleList = res.data
+    },
+    async getTreeList() {
+      const res = await getTreeListAPI()
+      this.treeList = res.data
     }
   }
 }
