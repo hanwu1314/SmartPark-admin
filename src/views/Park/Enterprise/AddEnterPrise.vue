@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { getIndustryListAPI, uploadAPI } from '@/services'
+import { getIndustryListAPI, uploadAPI, createEnterpriseAPI } from '@/services'
 export default {
   data() {
     const validatePhone = (rule, value, cb) => {
@@ -159,8 +159,11 @@ export default {
       return isPNG && isLt5M
     },
     confirmAdd() {
-      this.$refs.ruleForm.validate((valid) => {
+      this.$refs.ruleForm.validate(async (valid) => {
         if (valid) {
+          await createEnterpriseAPI(this.addForm)
+          this.$message.success('新增成功')
+          this.$router.back()
         }
       })
     }

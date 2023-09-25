@@ -43,3 +43,15 @@ export function uploadAPI(data) {
     data
   })
 }
+
+/**
+ * 创建企业
+ * @param {*} data
+ * @returns
+ */
+export function createEnterpriseAPI(data) {
+  return hwRequest.post({
+    url: '/park/enterprise',
+    data
+  })
+}
