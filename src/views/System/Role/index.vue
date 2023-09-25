@@ -23,7 +23,11 @@
       <div class="tree-wrapper">
         <div v-for="item in treeList" :key="item.id" class="tree-item">
           <div class="tree-title">{{ item.title }}</div>
-          <el-tree :data="item.children" :props="defaultProps" />
+          <el-tree
+            :data="item.children"
+            :props="defaultProps"
+            :show-checkbox="true"
+            default-expand-all />
         </div>
       </div>
     </div>
@@ -32,7 +36,14 @@
 
 <script>
 import { getRoleListAPI, getTreeListAPI } from '@/services'
-
+function addDisabled(treeList) {
+  treeList.forEach((item) => {
+    item.disabled = true
+    if (item.children) {
+      addDisabled(item.children)
+    }
+  })
+}
 export default {
   name: 'Role',
   data() {
@@ -61,6 +72,7 @@ export default {
     async getTreeList() {
       const res = await getTreeListAPI()
       this.treeList = res.data
+      addDisabled(this.treeList)
     }
   }
 }
