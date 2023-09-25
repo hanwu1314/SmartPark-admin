@@ -1,4 +1,4 @@
-import hwRequest from "../request";
+import hwRequest from '../request'
 /**园区管理 */
 /**
  * 企业列表
@@ -7,9 +7,9 @@ import hwRequest from "../request";
  */
 export function getEnterpriseAPI(params) {
   return hwRequest.get({
-    url: "/park/enterprise",
-    params,
-  });
+    url: '/park/enterprise',
+    params
+  })
 }
 
 /**
@@ -19,6 +19,6 @@ export function getEnterpriseAPI(params) {
  */
 export function delEnterPriseAPI(id) {
   return hwRequest.delete({
-    url: `/park/enterprise/${id}`,
-  });
+    url: `/park/enterprise/${id}`
+  })
 }
