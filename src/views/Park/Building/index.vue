@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import { getBuildingListAPI } from '@/services'
+import { getBuildingListAPI, createBuildingListAPI } from '@/services'
 export default {
   name: 'Building',
   data() {
@@ -137,9 +137,11 @@ export default {
       this.dialogVisible = false
     },
     confirmAdd() {
-      this.$refs.addForm.validate((valid) => {
+      this.$refs.addForm.validate(async (valid) => {
         if (valid) {
-          console.log('添加')
+          await createBuildingListAPI(this.addForm)
+          this.getBuildingList()
+          this.dialogVisible = false
         }
       })
     }
