@@ -6,7 +6,7 @@
           ><i class="el-icon-arrow-left" />返回</span
         >
         <span>|</span>
-        <span>添加企业</span>
+        <span>{{ id ? '编辑企业' : '新增企业' }}</span>
       </div>
       <div class="right">管理员</div>
     </header>
@@ -54,7 +54,7 @@
                   只能上传png图片，且不超过5M
                 </div>
               </el-upload>
-              <!-- <img :src="addForm.businessLicenseUrl" class="img" /> -->
+              <img :src="addForm.businessLicenseUrl" class="img" />
             </el-form-item>
           </el-form>
         </div>
@@ -70,7 +70,13 @@
 </template>
 
 <script>
-import { getIndustryListAPI, uploadAPI, createEnterpriseAPI } from '@/services'
+import {
+  getIndustryListAPI,
+  uploadAPI,
+  createEnterpriseAPI,
+  getEnterpriseDetailAPI,
+  updateEnterpriseAPI
+} from '@/services'
 export default {
   data() {
     const validatePhone = (rule, value, cb) => {
@@ -125,8 +131,22 @@ export default {
       }
     }
   },
-  mounted() {},
+  computed: {
+    id() {
+      return this.$route.query.id
+    }
+  },
+  mounted() {
+    // this.getIndustryList()
+    if (this.id) {
+      this.getDetail()
+    }
+  },
   methods: {
+    async getDetail() {
+      const res = await getEnterpriseDetailAPI(this.id)
+      this.addForm = res.data
+    },
     async getIndustryList() {
       const res = await getIndustryListAPI()
       this.industryList = res.data
@@ -161,8 +181,35 @@ export default {
     confirmAdd() {
       this.$refs.ruleForm.validate(async (valid) => {
         if (valid) {
-          await createEnterpriseAPI(this.addForm)
-          this.$message.success('新增成功')
+          if (this.id) {
+            const {
+              name,
+              id,
+              legalPerson,
+              registeredAddress,
+              industryCode,
+              businessLicenseId,
+              businessLicenseUrl,
+              contact,
+              contactNumber
+            } = this.addForm
+            await updateEnterpriseAPI({
+              name,
+              id,
+              legalPerson,
+              registeredAddress,
+              industryCode,
+              businessLicenseId,
+              businessLicenseUrl,
+              contact,
+              contactNumber
+            })
+          } else {
+            //
+            await createEnterpriseAPI(this.addForm)
+          }
+
+          this.$message.success(`${this.id ? '更新成功' : '新增成功'}`)
           this.$router.back()
         }
       })

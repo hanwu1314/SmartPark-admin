@@ -24,10 +24,12 @@
         <el-table-column label="联系人" prop="contact" />
         <el-table-column label="联系电话" prop="contactNumber" />
         <el-table-column label="操作">
-          <template #default="scope">
+          <template #default="{ row }">
             <el-button size="mini" type="text">添加合同</el-button>
             <el-button size="mini" type="text">查看</el-button>
-            <el-button size="mini" type="text">编辑</el-button>
+            <el-button size="mini" type="text" @click="editEnterprise(row.id)"
+              >编辑</el-button
+            >
             <el-button size="mini" type="text">删除</el-button>
           </template>
         </el-table-column>
@@ -76,6 +78,14 @@ export default {
     },
     clearSearch() {
       this.getlist()
+    },
+    editEnterprise(id) {
+      this.$router.push({
+        path: '/addEnterprise',
+        query: {
+          id
+        }
+      })
     }
   }
 }

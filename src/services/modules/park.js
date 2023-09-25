@@ -55,3 +55,26 @@ export function createEnterpriseAPI(data) {
     data
   })
 }
+
+/**
+ * 获取企业详情
+ * @param {*} id
+ * @returns
+ */
+export function getEnterpriseDetailAPI(id) {
+  return hwRequest.get({
+    url: `/park/enterprise/${id}`
+  })
+}
+
+/**
+ * 更新企业
+ * @param {*} data
+ * @returns
+ */
+export function updateEnterpriseAPI(data) {
+  return hwRequest.put({
+    url: '/park/enterprise',
+    data
+  })
+}
