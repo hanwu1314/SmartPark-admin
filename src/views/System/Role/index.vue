@@ -60,9 +60,10 @@ export default {
       }
     }
   },
-  mounted() {
-    this.getRoleList()
-    this.getTreeList()
+  async mounted() {
+    await this.getRoleList()
+    await this.getTreeList()
+    this.switchTab(0)
   },
   methods: {
     async switchTab(index) {
