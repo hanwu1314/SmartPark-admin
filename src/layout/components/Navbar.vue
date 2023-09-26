@@ -4,6 +4,9 @@
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <!-- 用户名称 -->
+          <el-button size="small" plain @click="$router.push('/big-screen')"
+            >可视化大屏</el-button
+          >
           <span class="name">管理员</span>
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -30,11 +33,12 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        this.$store.commit('user/clearUserInfo')
-        this.$router.push('/login')
-      }).catch(() => {
       })
+        .then(() => {
+          this.$store.commit('user/clearUserInfo')
+          this.$router.push('/login')
+        })
+        .catch(() => {})
     }
   }
 }
@@ -122,8 +126,8 @@ export default {
       .avatar-wrapper {
         margin-top: 5px;
         position: relative;
-
         .name {
+          margin-left: 10px;
           font-weight: 600;
           cursor: pointer;
         }

@@ -2,7 +2,8 @@ import Vue from 'vue'
 import 'normalize.css/normalize.css'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-
+// 启动微前端配置
+import './registerMicroApp'
 import '@/styles/index.scss' // global css
 
 import App from './App'
